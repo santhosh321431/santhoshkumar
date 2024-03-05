@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html ng-app="chatApp">
+
+<head>
+    <title>Real-time Chat Application</title>
+    <style>
+        // Initialize Firebase
+var firebaseConfig = {
+    // Your Firebase config here
+};
+firebase.initializeApp(firebaseConfig);
+
+angular.module('chatApp', [])
+    .controller('ChatController', function () {
+        var vm = this;
+        vm.messages = [];
+        vm.newMessage = "";
+
+        var database = firebase.database();
+        var messagesRef = database.ref('messages');
+
+        messagesRef.on('child_added', function (snapshot) {
+            var message = snapshot.val();
+            vm.messages.push(message);
+        });
+
+        vm.sendMessage = function () {
+            if (vm.newMessage.trim() !== "") {
+                messagesRef.push({
+                    sender: "User",
+                    text: vm.newMessage
+                });
+                vm.newMessage = "";
+            }
+        };
+    });
+
+    </style>
+</head>
+
+<body>
+    <div ng-controller="ChatController as chatCtrl">
+        <h1>Real-time Chat Application</h1>
+        <div class="chat-box">
+            <div class="message" ng-repeat="message in chatCtrl.messages">
+                <strong>{{message.sender}}:</strong> {{message.text}}
+            </div>
+        </div>
+        <div class="input-box">
+            <input type="text" ng-model="chatCtrl.newMessage" placeholder="Type your message...">
+            <button ng-click="chatCtrl.sendMessage()">Send</button>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.4.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.4.0/firebase-database.js"></script>
+    <script>
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+}
+
+.chat-box {
+    height: 300px;
+    overflow-y: scroll;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.message {
+    margin-bottom: 5px;
+}
+
+.input-box {
+    margin-top: 10px;
+}
+
+.input-box input {
+    width: 80%;
+    padding: 5px;
+}
+
+.input-box button {
+    padding: 5px 10px;
+}
+
+    </script>
+</body>
+
+</html>

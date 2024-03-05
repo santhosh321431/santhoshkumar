@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html ng-app="quizApp">
+
+<head>
+    <title>Interactive Quiz App</title>
+    <style>
+        angular.module('quizApp', [])
+    .controller('QuizController', function () {
+        var vm = this;
+        vm.quizOver = false;
+        vm.score = 0;
+        vm.currentQuestion = 0;
+        vm.questions = [
+            {
+                question: "What is the capital of France?",
+                options: ["London", "Paris", "Rome", "Berlin"],
+                correctAnswer: "Paris"
+            },
+            {
+                question: "What is 2 + 2?",
+                options: ["3", "4", "5", "6"],
+                correctAnswer: "4"
+            }
+        ];
+
+        vm.question = vm.questions[vm.currentQuestion].question;
+        vm.options = vm.questions[vm.currentQuestion].options;
+
+        vm.checkAnswer = function (selectedOption) {
+            if (selectedOption === vm.questions[vm.currentQuestion].correctAnswer) {
+                vm.score++;
+            }
+            vm.currentQuestion++;
+            if (vm.currentQuestion < vm.questions.length) {
+                vm.question = vm.questions[vm.currentQuestion].question;
+                vm.options = vm.questions[vm.currentQuestion].options;
+            } else {
+                vm.quizOver = true;
+            }
+        };
+    });
+
+    </style>
+</head>
+
+<body>
+    <div ng-controller="QuizController as quizCtrl">
+        <h1>Interactive Quiz App</h1>
+        <div ng-show="!quizCtrl.quizOver">
+            <h2>{{quizCtrl.question}}</h2>
+            <ul>
+                <li ng-repeat="option in quizCtrl.options" ng-click="quizCtrl.checkAnswer(option)">
+                    {{option}}
+                </li>
+            </ul>
+        </div>
+        <div ng-show="quizCtrl.quizOver">
+            <h2>Quiz Over!</h2>
+            <p>Your score is: {{quizCtrl.score}}</p>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script>
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    cursor: pointer;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f0f0f0;
+}
+
+li:hover {
+    background-color: #e0e0e0;
+}
+
+    </script>
+</body>
+
+</html>

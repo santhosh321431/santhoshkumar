@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="galleryApp">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Image Gallery</title>
+<style>
+    vbody {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-gap: 20px;
+}
+
+.image {
+    position: relative;
+    cursor: pointer;
+}
+
+img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: 5px;
+}
+
+.image-details {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.image:hover .overlay {
+    opacity: 1;
+}
+
+.image:hover .image-details {
+    opacity: 1;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.modal-content {
+    position: relative;
+    margin: auto;
+    padding: 20px;
+    max-width: 80%;
+    max-height: 80%;
+    overflow: auto;
+}
+
+.close {
+    color: #fff;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #ccc;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+</style>
+</head>
+<body>
+<div ng-controller="galleryController as galleryCtrl" class="container">
+    <h1>Interactive Image Gallery</h1>
+    <div class="gallery">
+        <div class="image" ng-repeat="image in galleryCtrl.images" ng-click="galleryCtrl.showDetails(image)">
+            <img ng-src="{{ image.url }}" alt="{{ image.title }}">
+            <div class="overlay"></div>
+            <div class="image-details">
+                <h2>{{ image.title }}</h2>
+                <p>{{ image.description }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="modal" ng-show="galleryCtrl.showModal">
+        <div class="modal-content">
+            <span class="close" ng-click="galleryCtrl.closeModal()">&times;</span>
+            <img ng-src="{{ galleryCtrl.selectedImage.url }}" alt="{{ galleryCtrl.selectedImage.title }}">
+            <h2>{{ galleryCtrl.selectedImage.title }}</h2>
+            <p>{{ galleryCtrl.selectedImage.description }}</p>
+        </div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+<script>
+    angular.module('galleryApp', [])
+.controller('galleryController', function() {
+    this.images = [
+        { title: 'Image 1', url: 'https://images.pexels.com/photos/3573351/pexels-photo-3573351.png', description: 'Description for image 1' },
+        { title: 'Image 2', url: 'https://images.pexels.com/photos/34950/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=600&lazy=load', description: 'Description for image 2' },
+        { title: 'Image 3', url: 'https://images.pexels.com/photos/2387866/pexels-photo-2387866.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', description: 'Description for image 3' },
+        { title: 'Image 4', url: 'https://images.pexels.com/photos/2257127/pexels-photo-2257127.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load', description: 'Description for image 4' }
+    ];
+    this.showModal = false;
+    this.selectedImage = {};
+
+    this.showDetails = function(image) {
+        this.selectedImage = image;
+        this.showModal = true;
+    };
+
+    this.closeModal = function() {
+        this.showModal = false;
+    };
+});
+
+</script>
+</body>
+</html>

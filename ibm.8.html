@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html ng-app="todoApp">
+
+<head>
+    <title>Animated To-Do List</title>
+    <style>
+        angular.module('todoApp', [])
+    .controller('TodoListController', function () {
+        var vm = this;
+        vm.newTask = "";
+        vm.tasks = [];
+
+        vm.addTask = function () {
+            if (vm.newTask.trim() !== "") {
+                vm.tasks.push({ name: vm.newTask, removing: false });
+                vm.newTask = "";
+            }
+        };
+
+        vm.removeTask = function (index) {
+            vm.tasks[index].removing = true;
+            setTimeout(function () {
+                vm.tasks.splice(index, 1);
+            }, 500); // Remove after 500ms (animation duration)
+        };
+    });
+
+    </style>
+    
+</head>
+
+<body>
+    <div ng-controller="TodoListController as todoListCtrl">
+        <h1>Animated To-Do List</h1>
+        <input type="text" ng-model="todoListCtrl.newTask" placeholder="Add a new task">
+        <button ng-click="todoListCtrl.addTask()">Add Task</button>
+        <ul>
+            <li ng-repeat="task in todoListCtrl.tasks" ng-class="{'fade-out': task.removing}">
+                {{task.name}}
+                <button ng-click="todoListCtrl.removeTask($index)">Remove</button>
+            </li>
+        </ul>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script>
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+}
+
+input[type="text"], button {
+    margin-bottom: 10px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #ccc;
+}
+
+li.fade-out {
+    animation: fadeOut 0.5s ease;
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        height: 0;
+        padding: 0;
+        margin: 0;
+        border: none;
+    }
+}
+
+    </script>
+</body>
+
+</html>

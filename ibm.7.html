@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html ng-app="productCatalogApp">
+
+<head>
+    <title>Product Catalog with Filters</title>
+    <style>
+        angular.module('productCatalogApp', [])
+    .controller('ProductCatalogController', function () {
+        var vm = this;
+        vm.selectedCategory = "";
+        vm.selectedFeatures = {};
+
+        vm.categories = ["Electronics", "Clothing", "Home Appliances"];
+        vm.features = ["Feature 1", "Feature 2", "Feature 3"];
+
+        vm.products = [
+            { name: "Product 1", category: "Electronics", price: 100, features: { "Feature 1": true, "Feature 2": false, "Feature 3": true } },
+            { name: "Product 2", category: "Clothing", price: 50, features: { "Feature 1": false, "Feature 2": true, "Feature 3": false } },
+            { name: "Product 3", category: "Home Appliances", price: 200, features: { "Feature 1": true, "Feature 2": true, "Feature 3": false } }
+        ];
+
+        vm.filteredProducts = vm.products;
+
+        vm.$watchGroup(['selectedCategory', 'selectedFeatures'], function (newValues, oldValues) {
+            vm.filteredProducts = vm.products.filter(function (product) {
+                var categoryMatch = !vm.selectedCategory || product.category === vm.selectedCategory;
+                var featureMatch = Object.keys(vm.selectedFeatures).every(function (feature) {
+                    return !vm.selectedFeatures[feature] || product.features[feature];
+                });
+                return categoryMatch && featureMatch;
+            });
+        }, true);
+    });
+
+    </style>
+</head>
+
+<body>
+    <div ng-controller="ProductCatalogController as catalogCtrl">
+        <h1>Product Catalog</h1>
+        <div>
+            <h2>Filter by Category:</h2>
+            <select ng-model="catalogCtrl.selectedCategory">
+                <option value="">All Categories</option>
+                <option ng-repeat="category in catalogCtrl.categories" value="{{category}}">
+                    {{category}}
+                </option>
+            </select>
+        </div>
+        <div>
+            <h2>Filter by Feature:</h2>
+            <label ng-repeat="feature in catalogCtrl.features">
+                <input type="checkbox" ng-model="catalogCtrl.selectedFeatures[feature]"> {{feature}}
+            </label>
+        </div>
+        <div class="products">
+            <div ng-repeat="product in catalogCtrl.filteredProducts">
+                <h3>{{product.name}}</h3>
+                <p>Category: {{product.category}}</p>
+                <p>Price: {{product.price}}</p>
+                <ul>
+                    <li ng-repeat="(feature, value) in product.features" ng-if="value">
+                        {{feature}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script>
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+.select {
+    margin-bottom: 20px;
+}
+
+.products {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.products div {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+    width: 300px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 5px;
+}
+
+    </script>
+</body>
+
+</html>
